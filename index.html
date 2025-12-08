@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pruning LLMs with Reward Model Gradients</title>
+
+    <style>
+        /* ----- Global styles ----- */
+        :root {
+            --body-font: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                system-ui, "Segoe UI", sans-serif;
+            --mono-font: "SF Mono", SFMono-Regular, ui-monospace,
+                Menlo, Monaco, Consolas, "Liberation Mono",
+                "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f7fd;
+            color: #111;
+            line-height: 1.55;
+            font-size: 15px;
+            font-family: var(--body-font);
+            /* <--- use variable */
+        }
+
+        a {
+            color: #00796b;
+            /* teal-ish link color */
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ----- Sidebar ----- */
+        .sidebar {
+            position: fixed;
+            top: 120px;
+            left: 40px;
+            width: 170px;
+            padding-left: 4px;
+            font-size: 14px;
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 14px;
+        }
+
+        .sidebar-nav a {
+            display: inline-block;
+            line-height: 1.3;
+        }
+
+        /* ----- Main paper layout ----- */
+        .main {
+            margin-left: 240px;
+            /* leave space for sidebar */
+            padding: 24px 32px 60px 0;
+        }
+
+        .paper {
+            background-color: #ffffff;
+            border: 1px solid #e1e4ec;
+            margin: 8px 24px 40px;
+            padding: 24px 32px 36px;
+            /* was 28 / 40 */
+        }
+
+        /* ----- Title block ----- */
+        .paper-title {
+            font-family: var(--mono-font);
+            /* <--- use variable */
+            font-size: 2.4rem;
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0 0 20px 0;
+            letter-spacing: 0.04em;
+            /* subtle extra spacing like screenshot */
+        }
+
+        .paper-meta {
+            font-size: 15px;
+            margin-bottom: 18px;
+        }
+
+        .paper-divider {
+            height: 1px;
+            background-color: #e7ebf5;
+            margin: 12px -32px 24px;
+        }
+
+        /* ----- Sections ----- */
+        section {
+            margin-bottom: 32px;
+        }
+
+        section h2 {
+            font-size: 20px;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fixed Outline sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-title">Outline</div>
+        <ul class="sidebar-nav">
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#background">Background and<br>Related Work</a></li>
+            <li><a href="#methods">Methods</a></li>
+            <li><a href="#results">Results</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main document -->
+    <div class="main">
+        <article class="paper">
+            <!-- Title & author info -->
+            <header>
+                <h1 class="paper-title">
+                    Pruning LLMs with Reward Model Gradients
+                </h1>
+                <div class="paper-meta">
+                    Joshua Bello, Diego Coello, and Jabes Gallardo<br>
+                    Final project for 6.7960, MIT
+                </div>
+                <div class="paper-divider"></div>
+            </header>
+
+            <!-- Sections: replace placeholder text with your actual content -->
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>
+                    <!-- Your introduction text goes here -->
+                    Model compression is the task of reducing the size and computational demand of a machine learning
+                    model while maintaining performance comparable to the uncompressed (baseline) model on a set of
+                    task-dependent benchmarks. Although compression can be applied to any neural network architecture,
+                    our work focuses on large language models (LLMs) because they show tremendous natural language
+                    processing capabilities but are computationally intensive. The compression technique that we focus
+                    on is pruning: systematically removing individual weights, neurons, or entire layers from a neural
+                    network by zeroing out their values based on some importance criterion. One reason for choosing
+                    pruning as the focus of our study is that it offers memory usage and latency reduction, which
+                    matters for independent AI developers who rely on locally-hosted models. Even companies like OpenAI
+                    seek to reduce their model usage costs, since they pay for the GPU/TPU compute time required for
+                    inference whenever one of their hundreds of millions of users queries their models. Pruning also
+                    acts as a post-hoc regularizer for downstream tasks by removing redundant weights and decreasing
+                    potential overfitting in pre-existing LLMs. We consider pruning methods from the existing
+                    literature, some of which eliminate a certain percentage of weights based on their magnitude and the
+                    activation of the previous layer’s outputs. In our research, we took inspiration from Das et al, who
+                    developed a pruning technique that uses the gradient of the loss function with respect to the
+                    weights as part of the pruning metric. Based on this, we train separate reward models to use in our
+                    gradient computations and compare performance against existing techniques. We use reward models to
+                    mimic human feedback according to different language metrics.
+
+                </p>
+            </section>
+
+            <section id="background">
+                <h2>Background and Related Work</h2>
+                <p>
+                    <!-- Your background text goes here -->
+                    Curabitur ligula sapien, tincidunt non, euismod vitae, posuere
+                    imperdiet, leo. Maecenas malesuada.
+                </p>
+            </section>
+
+            <section id="methods">
+                <h2>Methods</h2>
+                <p>
+                    <!-- Your methods text goes here -->
+                    Fusce fermentum odio nec arcu. Vivamus viverra fermentum felis.
+                </p>
+            </section>
+
+            <section id="results">
+                <h2>Results</h2>
+                <p>
+                    <!-- Your results text goes here -->
+                    Pellentesque habitant morbi tristique senectus et netus et malesuada
+                    fames ac turpis egestas.
+                </p>
+            </section>
+
+            <section id="conclusion">
+                <h2>Conclusion</h2>
+                <p>
+                    <!-- Your conclusion text goes here -->
+                    Integer lacinia. Praesent blandit laoreet nibh. Fusce convallis
+                    metus id felis luctus adipiscing.
+                </p>
+            </section>
+        </article>
+    </div>
+
+</body>
+
+</html>
