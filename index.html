@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -270,7 +271,6 @@
                     effects on downstream task performance after pruning.
                 </p>
 
-
                 <!-- Example figure block; replace src and caption when you have a real figure
                 <div class="figure-row">
                     <div class="figure-main">
@@ -286,11 +286,55 @@
 
             <section id="background">
                 <h2>Background and Related Work</h2>
+
+                <h3>Pruning Methods</h3>
+
                 <p>
-                    <!-- Your background text goes here -->
-                    Curabitur ligula sapien, tincidunt non, euismod vitae, posuere
-                    imperdiet, leo. Maecenas malesuada.
+                    Magnitude pruning is a straightforward pruning method that uses the magnitudes of the model weights
+                    as the pruning metric. After specifying a sparsity level and granularity (e.g., unstructured or
+                    layerwise), the weights with the smallest magnitudes are removed (or set to zero). Magnitude pruning
+                    is not computationally expensive relative to advanced pruning techniques such as SparseGPT
+                    <sup><a href="#ref-frantar2023-sparsegpt">[15]</a></sup>. It has proven to be effective at
+                    compressing small models while maintaining a similar level of performance, but has been shown to
+                    fail dramatically on massive LLMs even with relatively low levels of sparsity
+                    <sup><a href="#ref-sun2023-simple">[3]</a></sup>.
                 </p>
+
+                <p>
+                    WANDA pruning <sup><a href="#ref-sun2023-simple">[3]</a></sup> is a pruning method that multiplies
+                    the magnitudes of weights by the corresponding input activations over a calibration dataset and uses
+                    this product as an importance criterion. The paper presents an example highlighting the differences
+                    in weight selection between magnitude and WANDA pruning. Imagine a neuron with two inputs and two
+                    weights, where \( y = w_1 x_1 + w_2 x_2 \). We are looking to prune one of the weights, and
+                    \(|w_1| &lt; |w_2|\). Under magnitude pruning, we would prune \(w_1\). Now, if \(|x_1| \gg |x_2|\),
+                    then it is possible that \(|w_1 x_1| &gt; |w_2 x_2|\), meaning that the contribution to the neuron’s
+                    output coming from \(w_1\) is greater than the contribution from \(w_2\), despite \(w_1\) being
+                    smaller. Hence, under WANDA pruning, we would prune \(w_2\). Compared to magnitude pruning, WANDA
+                    introduces only a small additional computational overhead, stemming from the need to compute
+                    activation-based importance scores via an extra forward pass through the model. Despite this added
+                    cost, the empirical results in the WANDA study demonstrate clear advantages at higher sparsity
+                    levels, where it consistently maintains performance that is far better than magnitude-based pruning.
+                </p>
+
+                <p>
+                    GBLM pruning <sup><a href="#ref-das2023-beyond">[4]</a></sup> further explores gradient-informed
+                    pruning criteria for LLMs. According to the paper, gradients, despite being correlated with the
+                    importance of weights for LLM pruning, are underutilized in pruning metrics. To address this, the
+                    GBLM-Pruner method calculates the importance of each weight by multiplying the weight’s magnitude
+                    and its gradient with respect to the cross-entropy loss and, optionally, adding the weight
+                    multiplied by its input activation (the metric from WANDA pruning). Given a specified sparsity
+                    level, the weights with the lowest importance scores are removed (set to zero). The paper reports
+                    that LLMs pruned with GBLM-Pruner outperform the same models pruned with previous methods on several
+                    evaluation metrics.
+                </p>
+
+                <p>
+                    Our pruning metric follows the GBLM-Pruner formulation shown in the equation below, with one key
+                    modification: instead of using gradients derived from the cross-entropy pretraining loss, we use
+                    gradients from a REINFORCE-based reinforcement learning loss that is typically applied during
+                    reward-model fine-tuning of the LLM.
+                </p>
+
                 <p>
                     \[
                     \mathbf{W}_m[i,j] = \alpha \cdot \left|\mathbf{W}[i,j]\right| \cdot \left\|\mathbf{G}[:,
@@ -298,13 +342,103 @@
                     + \left|\mathbf{W}[i,j]\right| \cdot \left\| \mathbf{X}[:,j]\right\|_2
                     \]
                 </p>
+
+                <h3>Reinforcement Learning and Fine-Tuning</h3>
+
+                <p>
+                    Reinforcement learning from human feedback (RLHF)
+                    <sup><a href="#ref-ouyang2022-instructgpt">[5]</a></sup>
+                    is a process used in the post-training of a model where feedback from humans is used to improve a
+                    model’s performance at a downstream task. RLHF has been applied to many of the generative models we
+                    know today, such as ChatGPT and DALL·E, to make their outputs more human-like, helpful, and
+                    truthful, among other desired properties. In this framework, human feedback is first collected to
+                    train a separate reward model, which then assigns rewards to the LLM’s outputs and is used to update
+                    the LLM via a PPO-based objective. Evidence from this work and prior studies suggests that the type
+                    of demonstration data used to train the reward model strongly influences the types of tasks on which
+                    the LLM improves after fine-tuning. This inspired us to investigate whether a similar relationship
+                    between the reward model’s training data and the updated LLM would emerge if we modified the LLM by
+                    pruning it based on the gradient of a REINFORCE-style loss, rather than fine-tuning it with PPO.
+                </p>
             </section>
 
             <section id="methods">
                 <h2>Methods</h2>
+
+                <h3>Model and Overall Setup</h3>
                 <p>
-                    <!-- Your methods text goes here -->
-                    Fusce fermentum odio nec arcu. Vivamus viverra fermentum felis.
+                    For all of our studies, we use the open-source Llama-3.2-1B large language model as the benchmark
+                    model to which we apply different pruning methods, and also as the base model for our reward models
+                    used in gradient-based pruning. To train the reward models, we use the Tinker API from Thinking
+                    Machines, which provides an interface for large-scale LoRA-based fine-tuning and reinforcement
+                    learning. Both uses are explained in more detail below.
+                </p>
+
+                <h3>Training the Reward Models</h3>
+                <p>
+                    To create the reward models used in the process of calculating the gradients for the GBLM-Pruner
+                    method, we train three instances of Llama-3.2-1B on the HH-RLHF
+                    dataset <sup><a href="#ref-bai2022-hhrlhf">[16]</a></sup>, the UltraFeedback dataset
+                    <sup><a href="#ref-cui2023-ultrafeedback">[17]</a></sup>, and the Chatbot Arena Conversations
+                    dataset <sup><a href="#ref-zheng2023-chatbotarena">[18]</a></sup>, respectively, using Bradley–Terry
+                    loss with LoRA adapters.
+                </p>
+
+                <p>
+                    The HH-RLHF dataset contains human preference data about helpfulness and harmlessness, consisting of
+                    chosen versus rejected responses in dialogue settings. The UltraFeedback (UF) dataset contains
+                    diverse preference data, including annotations and ratings regarding instruction-following,
+                    truthfulness, honesty, and helpfulness across a wide variety of prompts. The Chatbot Arena
+                    Conversations dataset aggregates user preferences between responses from pairs of LLMs to the same
+                    prompt in a head-to-head evaluation setting. By training separate reward models on each dataset, we
+                    obtain three distinct reward signals reflecting different notions of “good” behavior.
+                </p>
+
+                <h3>Making the Pruned Models</h3>
+                <p>
+                    Starting with the original pre-trained Llama-3.2-1B model, we save one unmodified instance to use as
+                    our benchmark “No Pruning” baseline. We then create multiple additional instances of the original
+                    model, one for each pruning method: a magnitude-pruned baseline and modified versions of
+                    GBLM-Pruner for each reward model using REINFORCE loss. For all pruning metrics, we apply global
+                    unstructured pruning over linear layers, ranking individual weights by their importance scores and
+                    zeroing the lowest-scoring weights to reach a target sparsity level.
+                </p>
+
+                <p>
+                    We now describe how reward-model comparisons are used to compute REINFORCE gradients for each model
+                    parameter. Starting with an instance of the original Llama-3.2-1B model, a single prompt is passed
+                    into the LLM four times to produce four different responses. Each of the four responses is then
+                    paired with each of the others to produce six unique response pairings. These six response pairs are
+                    passed through the same reward model, yielding six preference scores. A score of \(-1\) indicates
+                    that response A is preferred, \(1\) indicates that response B is preferred, and \(0\) corresponds to
+                    a tie.
+                </p>
+
+                <p>
+                    For each of the four responses, we compute an average preference score by subtracting its number of
+                    losses from its number of wins against the other responses, and then dividing this difference by the
+                    number of matchups (three in this case). These average scores define the rewards used in a
+                    REINFORCE loss for each response. We compute the REINFORCE loss for all four responses and aggregate
+                    the four loss values (e.g., by averaging) to obtain a single scalar loss for the prompt. This
+                    completes a forward pass through the full system.
+                </p>
+
+                <p>
+                    We then backpropagate this loss through the original LLM to compute gradients with respect to all
+                    model parameters. While we could use gradients from a single prompt, in practice we use a batch of
+                    128 input prompts and aggregate the resulting gradients for each weight. Specifically, for each
+                    parameter we take the L1 norm (i.e., the sum of absolute values) of its gradients across the batch
+                    to obtain a reward-specific gradient magnitude. These aggregated gradient norms are substituted for
+                    \(\mathbf{G}\) in the GBLM-Pruner importance metric, producing a reward-model-dependent importance
+                    score for each weight. Finally, for a given target sparsity, we prune the weights with the lowest
+                    importance scores.
+                </p>
+
+                <h3>Evaluation</h3>
+                <p>
+                    We evaluate our models across multiple datasets to measure performance on a diverse set of tasks,
+                    including language modeling perplexity, zero-shot accuracy on a variety of question-answering
+                    benchmarks, and hate speech detection. This allows us to compare how different pruning strategies
+                    and reward signals affect both general language modeling quality and alignment-relevant behaviors.
                 </p>
             </section>
 
@@ -571,6 +705,35 @@
                             [Online]. Available:
                             <a href="https://arxiv.org/abs/2301.00774" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/2301.00774
+                            </a>
+                        </li>
+
+                        <!-- New dataset references -->
+                        <li id="ref-bai2022-hhrlhf">
+                            Y. Bai, A. Kadavath, S. Kundu, <em>et al.</em>,
+                            “Training a Helpful and Harmless Assistant with Reinforcement Learning from Human
+                            Feedback,”
+                            <em>arXiv preprint</em> arXiv:2204.05862, 2022.
+                            [Online]. Available:
+                            <a href="https://arxiv.org/abs/2204.05862" target="_blank" rel="noopener noreferrer">
+                                https://arxiv.org/abs/2204.05862
+                            </a>
+                        </li>
+                        <li id="ref-cui2023-ultrafeedback">
+                            G. Cui, C. Li, Y. Zhang, <em>et al.</em>,
+                            “UltraFeedback: Boosting Language Models with High-quality Feedback,”
+                            <em>arXiv preprint</em> arXiv:2310.01377, 2023.
+                            [Online]. Available:
+                            <a href="https://arxiv.org/abs/2310.01377" target="_blank" rel="noopener noreferrer">
+                                https://arxiv.org/abs/2310.01377
+                            </a>
+                        </li>
+                        <li id="ref-zheng2023-chatbotarena">
+                            L. Zheng, Y. Chiang, J. Wu, <em>et al.</em>,
+                            “Chatbot Arena Conversations Dataset,” LMSYS technical report, 2023.
+                            [Online]. Available:
+                            <a href="https://github.com/lm-sys/FastChat" target="_blank" rel="noopener noreferrer">
+                                https://github.com/lm-sys/FastChat
                             </a>
                         </li>
                     </ol>
