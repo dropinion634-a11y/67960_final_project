@@ -8,8 +8,11 @@
     <style>
         /* ----- Global styles ----- */
         :root {
+            /* Body text: SF Pro Text on macOS, otherwise system UI */
             --body-font: -apple-system, BlinkMacSystemFont, "SF Pro Text",
                 system-ui, "Segoe UI", sans-serif;
+
+            /* Title / monospaced text: SF Mono on macOS, otherwise common monospace */
             --mono-font: "SF Mono", SFMono-Regular, ui-monospace,
                 Menlo, Monaco, Consolas, "Liberation Mono",
                 "Courier New", monospace;
@@ -28,15 +31,17 @@
             padding: 0;
             background-color: #f3f7fd;
             color: #111;
-            line-height: 1.55;
-            font-size: 15px;
             font-family: var(--body-font);
-            /* <--- use variable */
+            font-size: 17px;
+            /* closer to original body size */
+            line-height: 1.55;
+            /* slightly tighter like screenshot */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         a {
             color: #00796b;
-            /* teal-ish link color */
             text-decoration: none;
         }
 
@@ -84,21 +89,22 @@
         .paper {
             background-color: #ffffff;
             border: 1px solid #e1e4ec;
-            margin: 8px 24px 40px;
+            margin: 8px 40px 40px;
             padding: 24px 32px 36px;
-            /* was 28 / 40 */
+            max-width: 980px;
         }
 
         /* ----- Title block ----- */
         .paper-title {
             font-family: var(--mono-font);
-            /* <--- use variable */
-            font-size: 2.4rem;
+            /* SF Mono-style title */
+            font-size: 2.5rem;
+            /* ~40px */
             font-weight: 400;
             line-height: 1.25;
             margin: 0 0 20px 0;
-            letter-spacing: 0.04em;
-            /* subtle extra spacing like screenshot */
+            letter-spacing: 0.06em;
+            /* a bit more spacing like original */
         }
 
         .paper-meta {
@@ -118,13 +124,80 @@
         }
 
         section h2 {
-            font-size: 20px;
+            font-size: 22px;
+            /* closer to original heading size */
             margin: 0 0 10px 0;
             font-weight: 700;
         }
 
         p {
-            margin: 0 0 10px 0;
+            margin: 0 0 14px 0;
+            /* a bit more space between paragraphs */
+        }
+
+        /* ----- Citations (inline) ----- */
+        .cite {
+            font-size: 0.75em;
+            vertical-align: super;
+        }
+
+        /* ----- References list ----- */
+        .references {
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        .references ol {
+            list-style: none;
+            /* remove default 1. 2. 3. */
+            counter-reset: ref-counter;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .references li {
+            counter-increment: ref-counter;
+            margin-bottom: 8px;
+        }
+
+        .references li::before {
+            content: "[" counter(ref-counter) "] ";
+        }
+
+        /* ----- Figures with right-side caption ----- */
+        .figure-row {
+            display: flex;
+            align-items: flex-start;
+            margin: 24px 0 32px 0;
+        }
+
+        .figure-main {
+            flex: 1 1 auto;
+        }
+
+        .figure-main img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .figure-caption {
+            flex: 0 0 230px;
+            margin-left: 24px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #444;
+        }
+
+        @media (max-width: 900px) {
+            .figure-row {
+                flex-direction: column;
+            }
+
+            .figure-caption {
+                margin-left: 0;
+                margin-top: 12px;
+            }
         }
     </style>
 
@@ -142,6 +215,7 @@
             <li><a href="#methods">Methods</a></li>
             <li><a href="#results">Results</a></li>
             <li><a href="#conclusion">Conclusion</a></li>
+            <li><a href="#references">References</a></li>
         </ul>
     </aside>
 
@@ -160,32 +234,50 @@
                 <div class="paper-divider"></div>
             </header>
 
-            <!-- Sections: replace placeholder text with your actual content -->
+            <!-- Sections -->
             <section id="introduction">
                 <h2>Introduction</h2>
                 <p>
-                    <!-- Your introduction text goes here -->
                     Model compression is the task of reducing the size and computational demand of a machine learning
                     model while maintaining performance comparable to the uncompressed (baseline) model on a set of
                     task-dependent benchmarks. Although compression can be applied to any neural network architecture,
                     our work focuses on large language models (LLMs) because they show tremendous natural language
-                    processing capabilities but are computationally intensive. The compression technique that we focus
-                    on is pruning: systematically removing individual weights, neurons, or entire layers from a neural
-                    network by zeroing out their values based on some importance criterion. One reason for choosing
-                    pruning as the focus of our study is that it offers memory usage and latency reduction, which
-                    matters for independent AI developers who rely on locally-hosted models. Even companies like OpenAI
-                    seek to reduce their model usage costs, since they pay for the GPU/TPU compute time required for
-                    inference whenever one of their hundreds of millions of users queries their models. Pruning also
-                    acts as a post-hoc regularizer for downstream tasks by removing redundant weights and decreasing
-                    potential overfitting in pre-existing LLMs. We consider pruning methods from the existing
-                    literature, some of which eliminate a certain percentage of weights based on their magnitude and the
-                    activation of the previous layer’s outputs. In our research, we took inspiration from Das et al, who
-                    developed a pruning technique that uses the gradient of the loss function with respect to the
-                    weights as part of the pruning metric. Based on this, we train separate reward models to use in our
-                    gradient computations and compare performance against existing techniques. We use reward models to
-                    mimic human feedback according to different language metrics.
-
+                    processing capabilities but are computationally intensive.
                 </p>
+
+                <p>
+                    The compression technique that we focus on is pruning: systematically removing individual weights,
+                    neurons, or entire layers from a neural network by zeroing out their values based on some importance
+                    criterion. One reason for choosing pruning as the focus of our study is that it offers memory usage
+                    and latency reduction, which matters for independent AI developers who rely on locally-hosted
+                    models. Even companies like OpenAI seek to reduce their model usage costs, since they pay for the
+                    GPU/TPU compute time required for inference whenever one of their hundreds of millions of users
+                    queries their models. Pruning also acts as a post-hoc regularizer for downstream tasks by removing
+                    redundant weights and decreasing potential overfitting in pre-existing LLMs.
+                </p>
+
+                <p>
+                    We consider pruning methods from the existing literature, some of which eliminate a certain
+                    percentage of weights based on their magnitude and the activation of the previous layer’s outputs.
+                    In our research, we took inspiration from recent work<span class="cite">[1]</span>, which developed
+                    a pruning
+                    technique that uses the gradient of the loss function with respect to the weights as part of the
+                    pruning metric. Based on this, we train separate reward models to use in our gradient computations
+                    and compare performance against existing techniques. We use reward models to mimic human feedback
+                    according to different language metrics.
+                </p>
+
+                <!-- Example figure block; replace src and caption when you have a real figure
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="figure1.png" alt="Example plot of pruning performance">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 1:</strong> Example caption describing the main result of the figure.
+                        Update this text and the image source once you have your actual figure.
+                    </div>
+                </div>
+                -->
             </section>
 
             <section id="background">
@@ -325,6 +417,40 @@
                     Integer lacinia. Praesent blandit laoreet nibh. Fusce convallis
                     metus id felis luctus adipiscing.
                 </p>
+            </section>
+
+            <section id="references">
+                <h2>References</h2>
+                <div class="references">
+                    <ol>
+                        <li>
+                            M. Sun, Z. Liu, A. Bair, and J. Z. Kolter, “A Simple and Effective Pruning Approach for
+                            Large
+                            Language
+                            Models,” <em>arXiv preprint</em> arXiv:2306.11695, 2023. [Online]. Available:
+                            https://arxiv.org/abs/2306.11695
+                        </li>
+                        <li>
+                            R. J. Das, M. Sun, L. Ma, and Z. Shen, “Beyond Size: How Gradients Shape Pruning Decisions
+                            in Large
+                            Language Models,” <em>arXiv preprint</em> arXiv:2311.04902, 2023. [Online]. Available:
+                            https://arxiv.org/abs/2311.04902
+                        </li>
+                        <li>
+                            L. Ouyang, J. Wu, X. Jiang, <em>et al.</em>, “Training Language Models to Follow
+                            Instructions with
+                            Human
+                            Feedback,” <em>arXiv preprint</em> arXiv:2203.02155, 2022. [Online]. Available:
+                            https://arxiv.org/abs/2203.02155
+                        </li>
+                        <li>
+                            N. Lee, T. Ajanthan, and P. H. S. Torr, “SNIP: Single-shot Network Pruning Based on
+                            Connection
+                            Sensitivity,” <em>arXiv preprint</em> arXiv:1810.02340, 2018. [Online]. Available:
+                            https://arxiv.org/abs/1810.02340
+                        </li>
+                    </ol>
+                </div>
             </section>
         </article>
     </div>
