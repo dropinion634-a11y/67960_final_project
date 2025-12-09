@@ -237,35 +237,39 @@
             <!-- Sections -->
             <section id="introduction">
                 <h2>Introduction</h2>
-                <p>
-                    Model compression is the task of reducing the size and computational demand of a machine learning
-                    model while maintaining performance comparable to the uncompressed (baseline) model on a set of
-                    task-dependent benchmarks. Although compression can be applied to any neural network architecture,
-                    our work focuses on large language models (LLMs) because they show tremendous natural language
-                    processing capabilities but are computationally intensive.
-                </p>
+
+                <p>Modern large language models (LLMs) achieve strong performance largely due to their scale, but this
+                    scale makes them expensive. While very large models are often necessary during training, using them
+                    directly at inference time incurs high costs in memory, latency, energy, and hardware. These
+                    constraints limit real-world deployment, especially for edge devices, low-resource settings, and
+                    independent developers. Model compression addresses this training–deployment mismatch by enabling
+                    smaller, more efficient inference models while preserving performance close to the uncompressed
+                    baseline.</p>
+
+                <p>Common approaches to model compression include quantization, which reduces numerical precision, and
+                    knowledge distillation, which transfers knowledge from a larger teacher model to a smaller student
+                    model. The compression technique we focus on is pruning: systematically removing individual weights,
+                    neurons, or entire layers from a neural network by zeroing their values based on an importance
+                    criterion.</p>
 
                 <p>
-                    The compression technique that we focus on is pruning: systematically removing individual weights,
-                    neurons, or entire layers from a neural network by zeroing out their values based on some importance
-                    criterion. One reason for choosing pruning as the focus of our study is that it offers memory usage
-                    and latency reduction, which matters for independent AI developers who rely on locally-hosted
-                    models. Even companies like OpenAI seek to reduce their model usage costs, since they pay for the
-                    GPU/TPU compute time required for inference whenever one of their hundreds of millions of users
-                    queries their models. Pruning also acts as a post-hoc regularizer for downstream tasks by removing
-                    redundant weights and decreasing potential overfitting in pre-trained LLMs.
+                    Our work is inspired by gradient-based pruning methods that use the gradient of the loss with
+                    respect
+                    to the weights as part of the pruning criterion. Unlike prior approaches that rely on cross-entropy
+                    gradients from language-model pretraining, we instead use gradients from reward model loss functions
+                    <sup>
+                        <a href="#ref-schulman2017-ppo">[1]</a>
+                        <a href="#ref-williams1992-reinforce">[2]</a>
+                    </sup>,
+                    in the hope of better reflecting alignment with human preferences during pruning. We
+                    hypothesize that pruning with reward-specific gradients will preferentially preserve capabilities
+                    aligned with that reward signal—for example, a pruned model using a safety-oriented reward model
+                    will better maintain performance on truthfulness and toxicity benchmarks compared to pruned models
+                    using a reward model trained on general instruction-following data. We test this hypothesis by
+                    training multiple reward models from distinct feedback sources and systematically comparing their
+                    effects on downstream task performance after pruning.
                 </p>
 
-                <p>
-                    We consider pruning methods from the existing literature, some of which eliminate a certain
-                    percentage of weights based on their magnitude and the activation of the previous layer’s outputs.
-                    In our research, we took inspiration from recent work<span class="cite">[1]</span>, which developed
-                    a pruning
-                    technique that uses the gradient of the loss function with respect to the weights as part of the
-                    pruning metric. Based on this, we train separate reward models to use in our gradient computations
-                    and compare performance against existing techniques. We use reward models to mimic human feedback
-                    according to different language metrics.
-                </p>
 
                 <!-- Example figure block; replace src and caption when you have a real figure
                 <div class="figure-row">
@@ -424,126 +428,147 @@
                 <h2>References</h2>
                 <div class="references">
                     <ol>
+                        <!-- [1] PPO -->
+                        <li id="ref-schulman2017-ppo">
+                            J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov,
+                            “Proximal Policy Optimization Algorithms,”
+                            <em>arXiv preprint</em> arXiv:1707.06347, 2017.
+                            [Online]. Available:
+                            <a href="https://arxiv.org/abs/1707.06347" target="_blank" rel="noopener noreferrer">
+                                https://arxiv.org/abs/1707.06347
+                            </a>
+                        </li>
+
+                        <!-- [2] REINFORCE -->
+                        <li id="ref-williams1992-reinforce">
+                            R. J. Williams,
+                            “Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning,”
+                            <em>Machine Learning</em>, vol. 8, pp. 229–256, 1992.
+                            [Online]. Available:
+                            <a href="https://link.springer.com/article/10.1007/BF00992696" target="_blank"
+                                rel="noopener noreferrer">
+                                https://link.springer.com/article/10.1007/BF00992696
+                            </a>
+                        </li>
+
+                        <!-- Existing pruning / LLM papers (now [3]–[6]) -->
                         <li id="ref-sun2023-simple">
-                            M. Sun, Z. Liu, A. Bair, and J. Z. Kolter, “A Simple and Effective Pruning Approach for
-                            Large Language Models,” <em>arXiv preprint</em> arXiv:2306.11695, 2023. [Online]. Available:
+                            M. Sun, Z. Liu, A. Bair, and J. Z. Kolter,
+                            “A Simple and Effective Pruning Approach for Large Language Models,”
+                            <em>arXiv preprint</em> arXiv:2306.11695, 2023.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/2306.11695" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/2306.11695
                             </a>
                         </li>
                         <li id="ref-das2023-beyond">
-                            R. J. Das, M. Sun, L. Ma, and Z. Shen, “Beyond Size: How Gradients Shape Pruning Decisions
-                            in Large Language Models,” <em>arXiv preprint</em> arXiv:2311.04902, 2023. [Online].
-                            Available:
+                            R. J. Das, M. Sun, L. Ma, and Z. Shen,
+                            “Beyond Size: How Gradients Shape Pruning Decisions in Large Language Models,”
+                            <em>arXiv preprint</em> arXiv:2311.04902, 2023.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/2311.04902" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/2311.04902
                             </a>
                         </li>
                         <li id="ref-ouyang2022-instructgpt">
-                            L. Ouyang, J. Wu, X. Jiang, <em>et al.</em>, “Training Language Models to Follow
-                            Instructions with Human Feedback,” <em>arXiv preprint</em> arXiv:2203.02155, 2022.
+                            L. Ouyang, J. Wu, X. Jiang, <em>et al.</em>,
+                            “Training Language Models to Follow Instructions with Human Feedback,”
+                            <em>arXiv preprint</em> arXiv:2203.02155, 2022.
                             [Online]. Available:
                             <a href="https://arxiv.org/abs/2203.02155" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/2203.02155
                             </a>
                         </li>
                         <li id="ref-lee2018-snip">
-                            N. Lee, T. Ajanthan, and P. H. S. Torr, “SNIP: Single-shot Network Pruning Based on
-                            Connection Sensitivity,” <em>arXiv preprint</em> arXiv:1810.02340, 2018. [Online].
-                            Available:
+                            N. Lee, T. Ajanthan, and P. H. S. Torr,
+                            “SNIP: Single-shot Network Pruning Based on Connection Sensitivity,”
+                            <em>arXiv preprint</em> arXiv:1810.02340, 2018.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1810.02340" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1810.02340
                             </a>
                         </li>
 
-                        <!-- New references from the WhatsApp message -->
-
-                        <!-- lm-evaluation-harness (Gao et al., 2021) -->
+                        <!-- lm-eval-harness & benchmarks -->
                         <li id="ref-gao2021-lmeval">
-                            L. Gao, J. Tow, S. Biderman, S. Black, A. DiPofi, C. Foster, <em>et al.</em>, “A Framework
-                            for
-                            Few-shot Language Model Evaluation,” 2021. [Online]. Available:
+                            L. Gao, J. Tow, S. Biderman, S. Black, A. DiPofi, C. Foster, <em>et al.</em>,
+                            “A Framework for Few-shot Language Model Evaluation,” 2021.
+                            [Online]. Available:
                             <a href="https://github.com/EleutherAI/lm-evaluation-harness" target="_blank"
                                 rel="noopener noreferrer">
                                 https://github.com/EleutherAI/lm-evaluation-harness
                             </a>
                         </li>
-
-                        <!-- BoolQ (Clark et al., 2019) -->
                         <li id="ref-clark2019-boolq">
                             C. Clark, K. Lee, M.-W. Chang, T. Kwiatkowski, M. Collins, and K. Toutanova,
-                            “BoolQ: Exploring the Surprising Difficulty of Natural Yes/No Questions,” in
-                            <em>Proc. NAACL-HLT</em>, 2019. [Online]. Available:
+                            “BoolQ: Exploring the Surprising Difficulty of Natural Yes/No Questions,”
+                            in <em>Proc. NAACL-HLT</em>, 2019.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1905.10044" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1905.10044
                             </a>
                         </li>
-
-                        <!-- RTE / GLUE (Wang et al., 2018) -->
                         <li id="ref-wang2018-glue">
                             A. Wang, A. Singh, J. Michael, F. Hill, O. Levy, and S. R. Bowman,
                             “GLUE: A Multi-Task Benchmark and Analysis Platform for Natural Language Understanding,”
-                            <em>arXiv preprint</em> arXiv:1804.07461, 2018. [Online]. Available:
+                            <em>arXiv preprint</em> arXiv:1804.07461, 2018.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1804.07461" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1804.07461
                             </a>
                         </li>
-
-                        <!-- HellaSwag (Zellers et al., 2019) -->
                         <li id="ref-zellers2019-hellaswag">
                             R. Zellers, A. Holtzman, Y. Bisk, A. Farhadi, and Y. Choi,
-                            “HellaSwag: Can a Machine Really Finish Your Sentence?,” in
-                            <em>Proc. ACL</em>, 2019. [Online]. Available:
+                            “HellaSwag: Can a Machine Really Finish Your Sentence?,”
+                            in <em>Proc. ACL</em>, 2019.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1905.07830" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1905.07830
                             </a>
                         </li>
-
-                        <!-- WinoGrande (Sakaguchi et al., 2019) -->
                         <li id="ref-sakaguchi2019-winogrande">
                             K. Sakaguchi, R. Bras, C. Bhagavatula, and Y. Choi,
                             “WinoGrande: An Adversarial Winograd Schema Challenge at Scale,”
-                            <em>arXiv preprint</em> arXiv:1907.10641, 2019. [Online]. Available:
+                            <em>arXiv preprint</em> arXiv:1907.10641, 2019.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1907.10641" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1907.10641
                             </a>
                         </li>
-
-                        <!-- ARC-easy / ARC-challenge (Clark et al., 2018) -->
                         <li id="ref-clark2018-arc">
                             P. Clark, I. Cowhey, O. Etzioni, T. Khot, A. Sabharwal, C. Schoenick, and O. Tafjord,
                             “Think You Have Solved Question Answering? Try ARC, the AI2 Reasoning Challenge,”
-                            <em>arXiv preprint</em> arXiv:1803.05457, 2018. [Online]. Available:
+                            <em>arXiv preprint</em> arXiv:1803.05457, 2018.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1803.05457" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1803.05457
                             </a>
                         </li>
-
-                        <!-- OBQA (Mihaylov et al., 2018) -->
                         <li id="ref-mihaylov2018-openbookqa">
                             T. Mihaylov, P. Clark, T. Khot, and A. Sabharwal,
                             “Can a Suit of Armor Conduct Electricity? A New Dataset for Open Book Question Answering,”
-                            in <em>Proc. EMNLP</em>, 2018. [Online]. Available:
+                            in <em>Proc. EMNLP</em>, 2018.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/1809.02789" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/1809.02789
                             </a>
                         </li>
 
-                        <!-- Dettmers & Zettlemoyer, 2022 (LLM.int8) -->
+                        <!-- Compression baselines -->
                         <li id="ref-dettmers2022-llmint8">
                             T. Dettmers, M. Lewis, Y. Belkada, and L. Zettlemoyer,
                             “LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale,”
-                            <em>arXiv preprint</em> arXiv:2208.07339, 2022. [Online]. Available:
+                            <em>arXiv preprint</em> arXiv:2208.07339, 2022.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/2208.07339" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/2208.07339
                             </a>
                         </li>
-
-                        <!-- Frantar & Alistarh, 2023 (SparseGPT) -->
                         <li id="ref-frantar2023-sparsegpt">
                             E. Frantar and D. Alistarh,
                             “SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot,”
-                            in <em>Proc. ICML</em>, 2023. [Online]. Available:
+                            in <em>Proc. ICML</em>, 2023.
+                            [Online]. Available:
                             <a href="https://arxiv.org/abs/2301.00774" target="_blank" rel="noopener noreferrer">
                                 https://arxiv.org/abs/2301.00774
                             </a>
