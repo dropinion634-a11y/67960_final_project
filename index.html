@@ -253,7 +253,7 @@
                     models. Even companies like OpenAI seek to reduce their model usage costs, since they pay for the
                     GPU/TPU compute time required for inference whenever one of their hundreds of millions of users
                     queries their models. Pruning also acts as a post-hoc regularizer for downstream tasks by removing
-                    redundant weights and decreasing potential overfitting in pre-existing LLMs.
+                    redundant weights and decreasing potential overfitting in pre-trained LLMs.
                 </p>
 
                 <p>
@@ -288,10 +288,11 @@
                     imperdiet, leo. Maecenas malesuada.
                 </p>
                 <p>
-                \[
-                \mathbf{W}_m[i,j] = \alpha \cdot \left|\mathbf{W}[i,j]\right| \cdot \left\|\mathbf{G}[:, i,j]\right\|_{p}
-                + \left|\mathbf{W}[i,j]\right| \cdot \left\| \mathbf{X}[:,j]\right\|_2
-                \]
+                    \[
+                    \mathbf{W}_m[i,j] = \alpha \cdot \left|\mathbf{W}[i,j]\right| \cdot \left\|\mathbf{G}[:,
+                    i,j]\right\|_{p}
+                    + \left|\mathbf{W}[i,j]\right| \cdot \left\| \mathbf{X}[:,j]\right\|_2
+                    \]
                 </p>
             </section>
 
