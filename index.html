@@ -485,9 +485,12 @@
             <section id="results">
                 <h2>Results</h2>
                 <p>
-                    <!-- Your results text goes here -->
-                    Pellentesque habitant morbi tristique senectus et netus et malesuada
-                    fames ac turpis egestas.
+                    The table below reports perplexity on the WikiText-2 (Merity et al., 2016) validation set at 50%
+                    sparsity for magnitude pruning and the various reward-model–guided pruning methods. Among all pruned
+                    models, Arena achieves the lowest perplexity value at 22.6 (lower perplexity is better), remaining
+                    within only 2.3× of the unpruned baseline despite removing half of the parameters. HH and
+                    UltraFeedback also substantially outperform magnitude pruning; however, their perplexity score
+                    remains noticeably higher than Arena.
                 </p>
 
                 <!-- 7 tasks also used in WANDA and GLP Pruner paper -->
@@ -572,6 +575,16 @@
                     </div>
                 </div>
 
+                <p>
+                    Magnitude pruning catastrophically degrades language modeling quality, increasing perplexity by more
+                    than two orders of magnitude relative to the unpruned baseline. This trend is clearly illustrated in
+                    the perplexity–sparsity plot across pruning methods. As sparsity increases toward 75%, magnitude
+                    pruning exhibits an exponential rise in perplexity, whereas reward-guided pruning methods degrade
+                    far more gradually. These results strongly indicate that reward-aligned pruning better identifies
+                    parameters that are critical for preserving next-token predictive structure, while magnitude-based
+                    pruning alone fails to maintain the underlying language modeling distribution.
+                </p>
+
                 <div class="figure-row">
                     <table border="1" cellspacing="0" cellpadding="4">
                         <thead>
@@ -604,6 +617,17 @@
                     </div>
                 </div>
 
+                <p>
+                    In addition to perplexity, we further evaluate our method on 7 zero-shot commonsense reasoning tasks
+                    from the EleutherAI lm-evaluation-harness benchmark (lm-evaluation-harness; Gao et al., 2021): BoolQ
+                    (Clark et al., 2019), RTE (Wang et al., 2018), HellaSwag (Zellers et al., 2019), WinoGrande
+                    (Sakaguchi et al., 2019), ARC-Easy (Clark et al., 2018), ARC-Challenge (Clark et al., 2018), and
+                    OpenBookQA (Mihaylov et al., 2018). As noted in prior work (Dettmers & Zettlemoyer, 2022; Frantar &
+                    Alistarh, 2023), zero-shot evaluation on individual tasks can be noisy; however, aggregated
+                    performance across multiple benchmarks provides a more reliable and interpretable measure of model
+                    quality.
+                </p>
+
                 <div class="figure-row">
                     <div class="figure-main">
                         <img src="diagrams/perplexity_v_sparsity.png"
@@ -617,6 +641,18 @@
                         indicating superior preservation of language modeling performance at higher sparsity levels.
                     </div>
                 </div>
+
+                <p>
+                    Overall, Arena consistently emerges as the strongest pruned model across all seven benchmarks. In
+                    contrast, magnitude pruning yields the worst accuracy on every task, demonstrating severe
+                    performance degradation. HH and UltraFeedback perform comparably to one another and substantially
+                    outperform magnitude pruning, but they consistently trail Arena by approximately 2–4 points in mean
+                    accuracy. Notably, performance degradation is not uniform across tasks. Fact-based tasks such as
+                    BoolQ, RTE, and ARC-Easy degrade more gracefully under pruning, whereas multi-step reasoning tasks
+                    such as ARC-Challenge and OpenBookQA are significantly more sensitive. One possible explanation is
+                    that reasoning-related weights emerge mainly during fine-tuning rather than pretraining, which may
+                    make them more sensitive to parameter removal and therefore more susceptible to pruning.
+                </p>
 
 
                 <div class="figure-row">
