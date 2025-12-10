@@ -202,6 +202,7 @@
                 margin-top: 12px;
             }
         }
+
         h3 {
             color: rgb(107, 107, 107);
         }
@@ -725,33 +726,66 @@
                         sparsity, which is particularly unexpected.
                     </div>
                 </div>
+
+                <p>
+                    We additionally investigate whether performance trends observed in models fine-tuned with different
+                    reward models persist after pruning. To this end, we evaluate pruned models on two safety- and
+                    truthfulness-oriented benchmarks: TruthfulQA-MC1 (CITATION) and ToxiGen (CITATION). TruthfulQA
+                    assesses a model’s resistance to hallucination and misinformation by measuring its ability to
+                    produce factually correct answers, while ToxiGen evaluates whether a model generates toxic or
+                    discriminatory content. Based on the objectives of the reward models, we hypothesized that models
+                    fine-tuned with the HH-RLHF reward model would outperform those trained with UltraFeedback, with
+                    Arena exhibiting the weakest performance, since HH-RLHF explicitly rewards helpful and non-harmful
+                    responses. However, this expected ordering is not reflected in the experimental results. On
+                    TruthfulQA-MC1 at 50% sparsity, the HH-pruned model ranks second behind UltraFeedback, while on
+                    ToxiGen it performs worst at the same sparsity level. Another surprising observation is a
+                    non-monotonic trend across both tasks, where accuracy improves at 50% sparsity before degrading at
+                    75%. One possible explanation is that these models are initially overparameterized, such that
+                    moderate sparsity can act as a form of regularization and transiently improve performance.
+                    Alternatively, this behavior may be attributable to evaluation noise, consistent with prior
+                    observations regarding the high variance of these benchmarks.
+                </p>
+
             </section>
 
             <section id="conclusion">
                 <h2>Conclusion</h2>
                 <p>
-                    While we hypothesized that reward-specific pruning would selectively preserve capabilities aligned with each reward model’s training objective 
-                    (e.g., safety-aligned rewards yielding superior performance on truthfulness and toxicity benchmarks), our results do not provide consistent or 
-                    conclusive evidence for this effect. The observed performance trends across TruthfulQA and ToxiGen are non-monotonic and do not follow the 
-                    expected ordering among reward models, suggesting that any alignment-specific retention under pruning is weaker, more variable, or more dataset-dependent 
-                    than initially hypothesized. These findings indicate that, although reward-model–guided pruning is highly effective at preserving general language modeling 
-                    and reasoning performance, its ability to selectively preserve reward-aligned behavioral traits remains an open question for future investigation.
+                    While we hypothesized that reward-specific pruning would selectively preserve capabilities aligned
+                    with each reward model’s training objective
+                    (e.g., safety-aligned rewards yielding superior performance on truthfulness and toxicity
+                    benchmarks), our results do not provide consistent or
+                    conclusive evidence for this effect. The observed performance trends across TruthfulQA and ToxiGen
+                    are non-monotonic and do not follow the
+                    expected ordering among reward models, suggesting that any alignment-specific retention under
+                    pruning is weaker, more variable, or more dataset-dependent
+                    than initially hypothesized. These findings indicate that, although reward-model–guided pruning is
+                    highly effective at preserving general language modeling
+                    and reasoning performance, its ability to selectively preserve reward-aligned behavioral traits
+                    remains an open question for future investigation.
                 </p>
 
                 <h3>Limitations</h3>
                 <p>
-                    This study does not directly compare the reward-guided gradients used for pruning with the cross-entropy gradients 
-                    used in GLP-Pruner. As a result, we cannot yet quantify how fundamentally different these gradient signals are. 
-                    In addition, our experiments are restricted to small-scale models, and we do not evaluate the scalability of 
-                    reward-guided pruning to larger architectures in the 7B–70B range. We also limit our analysis to unstructured 
-                    sparsity and do not examine structured pruning variants, which may exhibit different stability–efficiency trade-offs.
+                    This study does not directly compare the reward-guided gradients used for pruning with the
+                    cross-entropy gradients
+                    used in GLP-Pruner. As a result, we cannot yet quantify how fundamentally different these gradient
+                    signals are.
+                    In addition, our experiments are restricted to small-scale models, and we do not evaluate the
+                    scalability of
+                    reward-guided pruning to larger architectures in the 7B–70B range. We also limit our analysis to
+                    unstructured
+                    sparsity and do not examine structured pruning variants, which may exhibit different
+                    stability–efficiency trade-offs.
                 </p>
 
                 <h3>Future Work</h3>
                 <p>
-                    It would be interesting to investigate post-pruning fine-tuning: after pruning with a given reward model, 
-                    how well can the resulting sparse model be further fine-tuned using the same reward signal? 
-                    Such experiments would shed light on whether reward-guided pruning merely removes redundant parameters or 
+                    It would be interesting to investigate post-pruning fine-tuning: after pruning with a given reward
+                    model,
+                    how well can the resulting sparse model be further fine-tuned using the same reward signal?
+                    Such experiments would shed light on whether reward-guided pruning merely removes redundant
+                    parameters or
                     also impairs the model’s capacity to absorb additional alignment information.
                 </p>
 
