@@ -487,6 +487,8 @@
 
             <section id="results">
                 <h2>Results</h2>
+
+                <h3>Perplexity</h3>
                 <p>
                     The table below reports perplexity on the WikiText-2 (Merity et al., 2016) validation set at 50%
                     sparsity for magnitude pruning and the various reward-model–guided pruning methods. Among all pruned
@@ -495,8 +497,6 @@
                     UltraFeedback also substantially outperform magnitude pruning; however, their perplexity score
                     remains noticeably higher than Arena.
                 </p>
-
-                <h3>Perplexity</h3>
 
                 <div class="figure-row">
                     <table border="1" cellspacing="0" cellpadding="4">
@@ -530,6 +530,16 @@
                     </div>
                 </div>
 
+                <p>
+                    Magnitude pruning catastrophically degrades language modeling quality, increasing perplexity by more
+                    than two orders of magnitude relative to the unpruned baseline. This trend is clearly illustrated in
+                    the perplexity–sparsity plot across pruning methods. As sparsity increases toward 75%, magnitude
+                    pruning exhibits an exponential rise in perplexity, whereas reward-guided pruning methods degrade
+                    far more gradually. These results strongly indicate that reward-aligned pruning better identifies
+                    parameters that are critical for preserving next-token predictive structure, while magnitude-based
+                    pruning alone fails to maintain the underlying language modeling distribution.
+                </p>
+
                 <div class="figure-row">
                     <div class="figure-main">
                         <img src="diagrams/perplexity_v_sparsity.png"
@@ -545,7 +555,17 @@
                 </div>
 
                 <h3>Zero-Shot Evaluation</h3>
-                <!-- 7 tasks also used in WANDA and GBLM Pruner paper -->
+                <p>
+                    In addition to perplexity, we further evaluate our method on 7 zero-shot commonsense reasoning tasks
+                    from the EleutherAI lm-evaluation-harness benchmark (lm-evaluation-harness; Gao et al., 2021): BoolQ
+                    (Clark et al., 2019), RTE (Wang et al., 2018), HellaSwag (Zellers et al., 2019), WinoGrande
+                    (Sakaguchi et al., 2019), ARC-Easy (Clark et al., 2018), ARC-Challenge (Clark et al., 2018), and
+                    OpenBookQA (Mihaylov et al., 2018). As noted in prior work (Dettmers & Zettlemoyer, 2022; Frantar &
+                    Alistarh, 2023), zero-shot evaluation on individual tasks can be noisy; however, aggregated
+                    performance across multiple benchmarks provides a more reliable and interpretable measure of model
+                    quality.
+                </p>
+
                 <div class="figure-row">
                     <table border="1" cellspacing="0" cellpadding="4">
                         <thead>
@@ -627,74 +647,6 @@
                     </div>
                 </div>
 
-                <h3>Fine-tuned Trends in Pruned Models</h3>
-                <p>
-                    Magnitude pruning catastrophically degrades language modeling quality, increasing perplexity by more
-                    than two orders of magnitude relative to the unpruned baseline. This trend is clearly illustrated in
-                    the perplexity–sparsity plot across pruning methods. As sparsity increases toward 75%, magnitude
-                    pruning exhibits an exponential rise in perplexity, whereas reward-guided pruning methods degrade
-                    far more gradually. These results strongly indicate that reward-aligned pruning better identifies
-                    parameters that are critical for preserving next-token predictive structure, while magnitude-based
-                    pruning alone fails to maintain the underlying language modeling distribution.
-                </p>
-
-                <div class="figure-row">
-                    <table border="1" cellspacing="0" cellpadding="4">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>No Pruning</th>
-                                <th>Magnitude (50%)</th>
-                                <th>HH (50%)</th>
-                                <th>UF (50%)</th>
-                                <th>Arena (50%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Perplexity</td>
-                                <td>9.916</td>
-                                <td>1732.262</td>
-                                <td>54.618</td>
-                                <td>61.442</td>
-                                <td>22.561</td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                    <div class="figure-caption">
-                        <strong>Table 2:</strong> WikiText-2 perplexity of pruned LLaMA-3.2-1B models under 50%
-                        unstructured global pruning of linear layers.
-                        Reward-model–guided pruning achieves substantially lower perplexity than magnitude pruning,
-                        demonstrating superior preservation of language modeling performance.
-                    </div>
-                </div>
-
-                <p>
-                    In addition to perplexity, we further evaluate our method on 7 zero-shot commonsense reasoning tasks
-                    from the EleutherAI lm-evaluation-harness benchmark (lm-evaluation-harness; Gao et al., 2021): BoolQ
-                    (Clark et al., 2019), RTE (Wang et al., 2018), HellaSwag (Zellers et al., 2019), WinoGrande
-                    (Sakaguchi et al., 2019), ARC-Easy (Clark et al., 2018), ARC-Challenge (Clark et al., 2018), and
-                    OpenBookQA (Mihaylov et al., 2018). As noted in prior work (Dettmers & Zettlemoyer, 2022; Frantar &
-                    Alistarh, 2023), zero-shot evaluation on individual tasks can be noisy; however, aggregated
-                    performance across multiple benchmarks provides a more reliable and interpretable measure of model
-                    quality.
-                </p>
-
-                <div class="figure-row">
-                    <div class="figure-main">
-                        <img src="diagrams/perplexity_v_sparsity.png"
-                            alt="Plot of perplexity vs pruning for various methods">
-                    </div>
-                    <div class="figure-caption">
-                        <strong>Figure 4:</strong> Perplexity as a function of sparsity for different pruning methods.
-                        The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity
-                        (lower is better) as sparsity rises under magnitude pruning.
-                        In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity,
-                        indicating superior preservation of language modeling performance at higher sparsity levels.
-                    </div>
-                </div>
-
                 <p>
                     Overall, Arena consistently emerges as the strongest pruned model across all seven benchmarks. In
                     contrast, magnitude pruning yields the worst accuracy on every task, demonstrating severe
@@ -707,25 +659,7 @@
                     make them more sensitive to parameter removal and therefore more susceptible to pruning.
                 </p>
 
-
-                <div class="figure-row">
-                    <div class="figure-main">
-                        <img src="diagrams/trends_v_sparsity.png" alt="Example plot of pruning performance">
-                    </div>
-                    <div class="figure-caption">
-                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the
-                        TruthfulQA MC1 dataset across different sparsity levels.
-                        A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50%
-                        sparsity,
-                        followed by a decline back toward the 25% sparsity level at 75% sparsity.
-                        The right plot shows the accuracy of the pruned models on the ToxiGen dataset at various
-                        sparsity levels.
-                        A similar pattern is observed, with accuracy initially increasing and then decreasing as
-                        sparsity grows;
-                        however, some pruning methods exhibit a nearly monotonic increase in accuracy with higher
-                        sparsity, which is particularly unexpected.
-                    </div>
-                </div>
+                <h3>Fine-tuned Trends in Pruned Models</h3>
 
                 <p>
                     We additionally investigate whether performance trends observed in models fine-tuned with different
@@ -745,6 +679,25 @@
                     Alternatively, this behavior may be attributable to evaluation noise, consistent with prior
                     observations regarding the high variance of these benchmarks.
                 </p>
+
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/trends_v_sparsity.png" alt="Example plot of pruning performance">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the
+                        TruthfulQA MC1 dataset across different sparsity levels.
+                        A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50%
+                        sparsity,
+                        followed by a decline back toward the 25% sparsity level at 75% sparsity.
+                        The right plot shows the accuracy of the pruned models on the ToxiGen dataset at various
+                        sparsity levels.
+                        A similar pattern is observed, with accuracy initially increasing and then decreasing as
+                        sparsity grows;
+                        however, some pruning methods exhibit a nearly monotonic increase in accuracy with higher
+                        sparsity, which is particularly unexpected.
+                    </div>
+                </div>
 
             </section>
 
