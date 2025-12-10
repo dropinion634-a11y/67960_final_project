@@ -168,7 +168,8 @@
         /* ----- Figures with right-side caption ----- */
         .figure-row {
             display: flex;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center; 
             margin: 24px 0 32px 0;
         }
 
@@ -183,11 +184,12 @@
         }
 
         .figure-caption {
-            flex: 0 0 230px;
+            flex: 0 0;
             margin-left: 24px;
             font-size: 14px;
             line-height: 1.4;
             color: #444;
+            text-align: center;
         }
 
         @media (max-width: 900px) {
@@ -547,6 +549,33 @@
                     </tbody>
                 </table>
 
+                Example figure block; replace src and caption when you have a real figure
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/perplexity_v_sparsity.png" alt="Plot of perplexity vs pruning for various methods">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 4:</strong> Perplexity as a function of sparsity for different pruning methods. 
+                        The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity (lower is better) as sparsity rises under magnitude pruning.
+                        In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity, indicating superior preservation of language modeling performance at higher sparsity levels.
+                    </div>
+                </div>
+               
+
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/trends_v_sparsity.png" alt="Example plot of pruning performance">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the TruthfulQA MC1 dataset across different sparsity levels. 
+                        A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50% sparsity, 
+                        followed by a decline back toward the 25% sparsity level at 75% sparsity. 
+                        The right plot shows the accuracy of the pruned models on the ToxiGen dataset at various sparsity levels. 
+                        A similar pattern is observed, with accuracy initially increasing and then decreasing as sparsity grows; 
+                        however, some pruning methods exhibit a nearly monotonic increase in accuracy with higher sparsity, which is particularly unexpected.
+                    </div>
+                </div>
+               
             </section>
 
             <section id="conclusion">
