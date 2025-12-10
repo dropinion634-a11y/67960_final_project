@@ -664,21 +664,24 @@
                 <p>
                     We additionally investigate whether performance trends observed in models fine-tuned with different
                     reward models persist after pruning. To this end, we evaluate pruned models on two safety- and
-                    truthfulness-oriented benchmarks: TruthfulQA-MC1 (CITATION) and ToxiGen (CITATION). TruthfulQA
-                    assesses a model’s resistance to hallucination and misinformation by measuring its ability to
-                    produce factually correct answers, while ToxiGen evaluates whether a model generates toxic or
-                    discriminatory content. Based on the objectives of the reward models, we hypothesized that models
-                    fine-tuned with the HH-RLHF reward model would outperform those trained with UltraFeedback, with
-                    Arena exhibiting the weakest performance, since HH-RLHF explicitly rewards helpful and non-harmful
-                    responses. However, this expected ordering is not reflected in the experimental results. On
-                    TruthfulQA-MC1 at 50% sparsity, the HH-pruned model ranks second behind UltraFeedback, while on
-                    ToxiGen it performs worst at the same sparsity level. Another surprising observation is a
-                    non-monotonic trend across both tasks, where accuracy improves at 50% sparsity before degrading at
-                    75%. One possible explanation is that these models are initially overparameterized, such that
-                    moderate sparsity can act as a form of regularization and transiently improve performance.
-                    Alternatively, this behavior may be attributable to evaluation noise, consistent with prior
-                    observations regarding the high variance of these benchmarks.
+                    truthfulness-oriented benchmarks: TruthfulQA-MC1 <sup><a
+                            href="#ref-lin2022-truthfulqa">[19]</a></sup> and ToxiGen <sup><a
+                            href="#ref-hartvigsen2022-toxigen">[20]</a></sup>. TruthfulQA assesses a model’s resistance
+                    to hallucination and misinformation by measuring its ability to produce factually correct answers,
+                    while ToxiGen evaluates whether a model generates toxic or discriminatory content. Based on the
+                    objectives of the reward models, we hypothesized that models fine-tuned with the HH-RLHF reward
+                    model would outperform those trained with UltraFeedback, with Arena exhibiting the weakest
+                    performance, since HH-RLHF explicitly rewards helpful and non-harmful responses. However, this
+                    expected ordering is not reflected in the experimental results. On TruthfulQA-MC1 at 50% sparsity,
+                    the HH-pruned model ranks second behind UltraFeedback, while on ToxiGen it performs worst at the
+                    same sparsity level. Another surprising observation is a non-monotonic trend across both tasks,
+                    where accuracy improves at 50% sparsity before degrading at 75%. One possible explanation is that
+                    these models are initially overparameterized, such that moderate sparsity can act as a form of
+                    regularization and transiently improve performance. Alternatively, this behavior may be attributable
+                    to evaluation noise, consistent with prior observations regarding the high variance of these
+                    benchmarks.
                 </p>
+
 
                 <div class="figure-row">
                     <div class="figure-main">
@@ -920,6 +923,29 @@
                             [Online]. Available:
                             <a href="https://github.com/lm-sys/FastChat" target="_blank" rel="noopener noreferrer">
                                 https://github.com/lm-sys/FastChat
+                            </a>
+                        </li>
+
+                        <!-- Truthfulness & toxicity benchmarks ([19]–[20]) -->
+                        <li id="ref-lin2022-truthfulqa">
+                            S. Lin, J. Hilton, and O. Evans,
+                            “TruthfulQA: Measuring How Models Mimic Human Falsehoods,”
+                            in <em>Proc. ACL</em>, 2022.
+                            [Online]. Available:
+                            <a href="https://arxiv.org/abs/2109.07958" target="_blank" rel="noopener noreferrer">
+                                https://arxiv.org/abs/2109.07958
+                            </a>
+                        </li>
+
+                        <li id="ref-hartvigsen2022-toxigen">
+                            T. Hartvigsen, S. Gabriel, H. Palangi, M. Sap, D. Ray, and E. Kamar,
+                            “ToxiGen: A Large-Scale Machine-Generated Dataset for Adversarial and Implicit Hate Speech
+                            Detection,”
+                            in <em>Proc. ACL</em>, 2022.
+                            [Online]. Available:
+                            <a href="https://doi.org/10.18653/v1/2022.acl-long.234" target="_blank"
+                                rel="noopener noreferrer">
+                                https://doi.org/10.18653/v1/2022.acl-long.234
                             </a>
                         </li>
                     </ol>
