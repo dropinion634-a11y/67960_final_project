@@ -203,6 +203,9 @@
                 margin-top: 12px;
             }
         }
+        h3 {
+            color: rgb(107, 107, 107);
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -488,6 +491,55 @@
                     fames ac turpis egestas.
                 </p>
 
+                <h3>Perplexity</h3>
+
+                <div class="figure-row">
+                    <table border="1" cellspacing="0" cellpadding="4">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>No Pruning</th>
+                                <th>Magnitude (50%)</th>
+                                <th>HH (50%)</th>
+                                <th>UF (50%)</th>
+                                <th>Arena (50%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Perplexity</td>
+                                <td>9.916</td>
+                                <td>1732.262</td>
+                                <td>54.618</td>
+                                <td>61.442</td>
+                                <td>22.561</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                    <div class="figure-caption">
+                        <strong>Table 2:</strong> WikiText-2 perplexity of pruned LLaMA-3.2-1B models under 50%
+                        unstructured global pruning of linear layers.
+                        Reward-model–guided pruning achieves substantially lower perplexity than magnitude pruning,
+                        demonstrating superior preservation of language modeling performance.
+                    </div>
+                </div>
+
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/perplexity_v_sparsity.png"
+                            alt="Plot of perplexity vs pruning for various methods">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 5:</strong> Perplexity as a function of sparsity for different pruning methods.
+                        The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity
+                        (lower is better) as sparsity rises under magnitude pruning.
+                        In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity,
+                        indicating superior preservation of language modeling performance at higher sparsity levels.
+                    </div>
+                </div>
+
+                <h3>Zero-Shot Evaluation</h3>
                 <!-- 7 tasks also used in WANDA and GLP Pruner paper -->
                 <div class="figure-row">
                     <table border="1" cellspacing="0" cellpadding="4">
@@ -570,52 +622,7 @@
                     </div>
                 </div>
 
-                <div class="figure-row">
-                    <table border="1" cellspacing="0" cellpadding="4">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>No Pruning</th>
-                                <th>Magnitude (50%)</th>
-                                <th>HH (50%)</th>
-                                <th>UF (50%)</th>
-                                <th>Arena (50%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Perplexity</td>
-                                <td>9.916</td>
-                                <td>1732.262</td>
-                                <td>54.618</td>
-                                <td>61.442</td>
-                                <td>22.561</td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                    <div class="figure-caption">
-                        <strong>Table 2:</strong> WikiText-2 perplexity of pruned LLaMA-3.2-1B models under 50%
-                        unstructured global pruning of linear layers.
-                        Reward-model–guided pruning achieves substantially lower perplexity than magnitude pruning,
-                        demonstrating superior preservation of language modeling performance.
-                    </div>
-                </div>
-
-                <div class="figure-row">
-                    <div class="figure-main">
-                        <img src="diagrams/perplexity_v_sparsity.png"
-                            alt="Plot of perplexity vs pruning for various methods">
-                    </div>
-                    <div class="figure-caption">
-                        <strong>Figure 5:</strong> Perplexity as a function of sparsity for different pruning methods.
-                        The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity
-                        (lower is better) as sparsity rises under magnitude pruning.
-                        In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity,
-                        indicating superior preservation of language modeling performance at higher sparsity levels.
-                    </div>
-                </div>
-
+                <h3>Fine-tuned Trends in Pruned Models</h3>
 
                 <div class="figure-row">
                     <div class="figure-main">
@@ -635,7 +642,6 @@
                         sparsity, which is particularly unexpected.
                     </div>
                 </div>
-
             </section>
 
             <section id="conclusion">
@@ -645,6 +651,11 @@
                     Integer lacinia. Praesent blandit laoreet nibh. Fusce convallis
                     metus id felis luctus adipiscing.
                 </p>
+
+                <h3>Limitations</h3>
+
+                <h3>Future Work</h3>
+
             </section>
 
             <section id="references">
