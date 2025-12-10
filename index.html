@@ -338,7 +338,7 @@
                     </div>
                     <div class="figure-caption">
                         <strong>Figure 1:</strong>
-
+                        A brief illustration of the GBLM-Pruner method.
                     </div>
                 </div>
 
@@ -436,7 +436,9 @@
                     </div>
                     <div class="figure-caption">
                         <strong>Figure 3:</strong>
-                        A high-level overview of our gradient pruning process of Llama 3.2-1B.
+                        A high-level overview of our gradient pruning process of Llama 3.2-1B. The black arrows
+                        represent
+                        forward passes, whereas the red arrows represent backward passes in the pipeline.
                     </div>
                 </div>
 
@@ -608,7 +610,7 @@
                             alt="Plot of perplexity vs pruning for various methods">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 5:</strong> Perplexity as a function of sparsity for different pruning methods.
+                        <strong>Figure 4:</strong> Perplexity as a function of sparsity for different pruning methods.
                         The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity
                         (lower is better) as sparsity rises under magnitude pruning.
                         In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity,
@@ -622,7 +624,7 @@
                         <img src="diagrams/trends_v_sparsity.png" alt="Example plot of pruning performance">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 6:</strong> The left plot shows the accuracy of the pruned models on the
+                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the
                         TruthfulQA MC1 dataset across different sparsity levels.
                         A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50%
                         sparsity,
