@@ -418,6 +418,17 @@
                     zeroing the lowest-scoring weights to reach a target sparsity level.
                 </p>
 
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/model_pipeline_2.png"
+                            alt="Diagram of the pruning and REINFORCE-based gradient pipeline">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 2:</strong>
+                        A high-level overview of our gradient pruning process of Llama 3.2-1B.
+                    </div>
+                </div>
+
                 <p>
                     We now describe how reward-model comparisons are used to compute REINFORCE gradients for each model
                     parameter. Starting with an instance of the original Llama-3.2-1B model, a single prompt is passed
@@ -448,17 +459,6 @@
                     importance scores.
                 </p>
 
-                <div class="figure-row">
-                    <div class="figure-main">
-                        <img src="diagrams/model_pipeline_2.png"
-                            alt="Diagram of the pruning and REINFORCE-based gradient pipeline">
-                    </div>
-                    <div class="figure-caption">
-                        <strong>Figure 2:</strong>
-                        A high-level overview of our gradient pruning process of Llama 3.2-1B.
-                    </div>
-                </div>
-
 
                 <h3>Evaluation</h3>
                 <p>
@@ -478,7 +478,7 @@
                 </p>
 
                 <!-- 7 tasks also used in WANDA and GLP Pruner paper -->
-                 <div class="figure-row">
+                <div class="figure-row">
                     <table border="1" cellspacing="0" cellpadding="4">
                         <thead>
                             <tr>
@@ -552,8 +552,10 @@
                         </tbody>
                     </table>
                     <div class="figure-caption">
-                        <strong>Table 1:</strong> Zero-shot evaluation results for 50% unstructured global pruning of linear layers in LLaMA-3.1-1B. 
-                        The mean results show that reward-model–guided pruning substantially outperforms standard magnitude pruning across evaluated tasks.
+                        <strong>Table 1:</strong> Zero-shot evaluation results for 50% unstructured global pruning of
+                        linear layers in LLaMA-3.1-1B.
+                        The mean results show that reward-model–guided pruning substantially outperforms standard
+                        magnitude pruning across evaluated tasks.
                     </div>
                 </div>
 
@@ -579,11 +581,13 @@
                                 <td>22.561</td>
                             </tr>
                         </tbody>
-                       
+
                     </table>
                     <div class="figure-caption">
-                        <strong>Table 2:</strong> WikiText-2 perplexity of pruned LLaMA-3.2-1B models under 50% unstructured global pruning of linear layers. 
-                        Reward-model–guided pruning achieves substantially lower perplexity than magnitude pruning, demonstrating superior preservation of language modeling performance.
+                        <strong>Table 2:</strong> WikiText-2 perplexity of pruned LLaMA-3.2-1B models under 50%
+                        unstructured global pruning of linear layers.
+                        Reward-model–guided pruning achieves substantially lower perplexity than magnitude pruning,
+                        demonstrating superior preservation of language modeling performance.
                     </div>
                 </div>
 
