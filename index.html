@@ -169,7 +169,7 @@
         .figure-row {
             display: flex;
             flex-direction: column;
-            align-items: center; 
+            align-items: center;
             margin: 24px 0 32px 0;
         }
 
@@ -396,6 +396,18 @@
                     obtain three distinct reward signals reflecting different notions of “good” behavior.
                 </p>
 
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/model_pipeline_1.png" alt="Diagram of the reward-model training pipeline">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 1:</strong>
+                        High-level overview of how separate reward models are trained on HH-RLHF, UltraFeedback,
+                        and Chatbot Arena preference data using Bradley–Terry loss with LoRA adapters.
+                    </div>
+                </div>
+
+
                 <h3>Making the Pruned Models</h3>
                 <p>
                     Starting with the original pre-trained Llama-3.2-1B model, we save one unmodified instance to use as
@@ -435,6 +447,18 @@
                     score for each weight. Finally, for a given target sparsity, we prune the weights with the lowest
                     importance scores.
                 </p>
+
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/model_pipeline_2.png"
+                            alt="Diagram of the pruning and REINFORCE-based gradient pipeline">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 2:</strong>
+                        A high-level overview of our gradient pruning process of Llama 3.2-1B.
+                    </div>
+                </div>
+
 
                 <h3>Evaluation</h3>
                 <p>
@@ -565,30 +589,38 @@
 
                 <div class="figure-row">
                     <div class="figure-main">
-                        <img src="diagrams/perplexity_v_sparsity.png" alt="Plot of perplexity vs pruning for various methods">
+                        <img src="diagrams/perplexity_v_sparsity.png"
+                            alt="Plot of perplexity vs pruning for various methods">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 4:</strong> Perplexity as a function of sparsity for different pruning methods. 
-                        The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity (lower is better) as sparsity rises under magnitude pruning.
-                        In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity, indicating superior preservation of language modeling performance at higher sparsity levels.
+                        <strong>Figure 4:</strong> Perplexity as a function of sparsity for different pruning methods.
+                        The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity
+                        (lower is better) as sparsity rises under magnitude pruning.
+                        In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity,
+                        indicating superior preservation of language modeling performance at higher sparsity levels.
                     </div>
                 </div>
-               
+
 
                 <div class="figure-row">
                     <div class="figure-main">
                         <img src="diagrams/trends_v_sparsity.png" alt="Example plot of pruning performance">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the TruthfulQA MC1 dataset across different sparsity levels. 
-                        A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50% sparsity, 
-                        followed by a decline back toward the 25% sparsity level at 75% sparsity. 
-                        The right plot shows the accuracy of the pruned models on the ToxiGen dataset at various sparsity levels. 
-                        A similar pattern is observed, with accuracy initially increasing and then decreasing as sparsity grows; 
-                        however, some pruning methods exhibit a nearly monotonic increase in accuracy with higher sparsity, which is particularly unexpected.
+                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the
+                        TruthfulQA MC1 dataset across different sparsity levels.
+                        A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50%
+                        sparsity,
+                        followed by a decline back toward the 25% sparsity level at 75% sparsity.
+                        The right plot shows the accuracy of the pruned models on the ToxiGen dataset at various
+                        sparsity levels.
+                        A similar pattern is observed, with accuracy initially increasing and then decreasing as
+                        sparsity grows;
+                        however, some pruning methods exhibit a nearly monotonic increase in accuracy with higher
+                        sparsity, which is particularly unexpected.
                     </div>
                 </div>
-               
+
             </section>
 
             <section id="conclusion">
