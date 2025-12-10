@@ -319,24 +319,16 @@
                     levels, where it consistently maintains performance that is far better than magnitude-based pruning.
                 </p>
 
-                <p>
-                    GBLM pruning <sup><a href="#ref-das2023-beyond">[4]</a></sup> further explores gradient-informed
-                    pruning criteria for LLMs. According to the paper, gradients, despite being correlated with the
-                    importance of weights for LLM pruning, are underutilized in pruning metrics. To address this, the
-                    GBLM-Pruner method calculates the importance of each weight by multiplying the weight’s magnitude
-                    and its gradient with respect to the cross-entropy loss and, optionally, adding the weight
-                    multiplied by its input activation (the metric from WANDA pruning). Given a specified sparsity
-                    level, the weights with the lowest importance scores are removed (set to zero). The paper reports
-                    that LLMs pruned with GBLM-Pruner outperform the same models pruned with previous methods on several
-                    evaluation metrics.
-                </p>
+                <div class="figure-row">
+                    <div class="figure-main">
+                        <img src="diagrams/general_pruning_figure.png"
+                            alt="General pruning diagram illustrating the GBLM-style importance metric">
+                    </div>
+                    <div class="figure-caption">
+                        <strong>Figure 1:</strong>
 
-                <p>
-                    Our pruning metric follows the GBLM-Pruner formulation shown in the equation below, with one key
-                    modification: instead of using gradients derived from the cross-entropy pretraining loss, we use
-                    gradients from a REINFORCE-based reinforcement learning loss that is typically applied during
-                    reward-model fine-tuning of the LLM.
-                </p>
+                    </div>
+                </div>
 
                 <p>
                     \[
@@ -401,7 +393,7 @@
                         <img src="diagrams/model_pipeline_1.png" alt="Diagram of the reward-model training pipeline">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 1:</strong>
+                        <strong>Figure 2:</strong>
                         High-level overview of how separate reward models are trained on HH-RLHF, UltraFeedback,
                         and Chatbot Arena preference data using Bradley–Terry loss with LoRA adapters.
                     </div>
@@ -424,7 +416,7 @@
                             alt="Diagram of the pruning and REINFORCE-based gradient pipeline">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 2:</strong>
+                        <strong>Figure 3:</strong>
                         A high-level overview of our gradient pruning process of Llama 3.2-1B.
                     </div>
                 </div>
@@ -597,7 +589,7 @@
                             alt="Plot of perplexity vs pruning for various methods">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 4:</strong> Perplexity as a function of sparsity for different pruning methods.
+                        <strong>Figure 5:</strong> Perplexity as a function of sparsity for different pruning methods.
                         The y-axis is shown on a logarithmic scale, illustrating the exponential increase in perplexity
                         (lower is better) as sparsity rises under magnitude pruning.
                         In contrast, reward-model–guided pruning exhibits a substantially slower growth in perplexity,
@@ -611,7 +603,7 @@
                         <img src="diagrams/trends_v_sparsity.png" alt="Example plot of pruning performance">
                     </div>
                     <div class="figure-caption">
-                        <strong>Figure 5:</strong> The left plot shows the accuracy of the pruned models on the
+                        <strong>Figure 6:</strong> The left plot shows the accuracy of the pruned models on the
                         TruthfulQA MC1 dataset across different sparsity levels.
                         A surprising trend emerges in which increasing sparsity leads to improved accuracy up to 50%
                         sparsity,
